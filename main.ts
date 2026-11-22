@@ -182,13 +182,8 @@ function execute(prog: Uint8Array, input: Uint8Array): { bytes: Uint8Array; code
   }
 }
 
-// Driver — one program answers a whole set (ISA.md "What an entry writes"):
-// for each instance id in MAKEFUN_INPUT_DIR it reads <id>/program.bin and
-// <id>/input.bin (a missing input.bin counts as empty input), runs the VM,
-// and writes <id>/stdout.bin (exactly the bytes the program wrote) and
-// <id>/exit.txt (the exit code in decimal, 0..255, with a newline). A program
-// that halts, exits, or traps always has an exit code; it is written either
-// way. Directories default to /input and /output when the env vars are absent.
+// Driver - per instance id: read program.bin + input.bin (missing = empty),
+// run the VM, write stdout.bin and exit.txt (code 0..255 + newline).
 const IN_DIR = process.env.MAKEFUN_INPUT_DIR ?? '/input';
 const OUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 for (const id of readdirSync(IN_DIR).sort()) {
