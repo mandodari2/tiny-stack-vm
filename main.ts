@@ -1,6 +1,17 @@
 // Tiny stack VM — written from make.fun's ISA.md (tiny-stack-vm-01-run-20261122).
 // One program answers a whole set: for each instance it runs program.bin
 // against input.bin and writes stdout.bin + exit.txt.
+//
+// Trap codes (ISA.md "Traps") and machine limits — the details most
+// implementations get wrong, so they are written down here, not assumed:
+//   0 HALT (exit 0) · 2 stack underflow · 3 stack overflow (>256 values)
+//   4 division by zero · 5 unknown opcode · 6 memory address outside 0..255
+//   7 call stack overflow (64 return addresses) · 8 RET on an empty call stack
+//   9 pc outside the program, or an immediate cut off by the program's end
+//   10 step limit (1,000,000 instructions) · 11 output limit (65,536 bytes)
+// EXIT (0x53) exits with the low byte of the popped value. A trap keeps the
+// output written before it; the trapping instruction itself writes nothing.
+// Limits: data stack 256, call stack 64, memory 256 words, output 65,536 B.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
